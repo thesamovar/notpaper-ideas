@@ -1,51 +1,93 @@
-import Related, { updateRelated } from './components/Related.js';
+import react from 'react';
+import Related from './components/Related.js';
 import Box from './components/Box.js';
 
-function observeRelated(entries, observer) {
-  const visible = entries.filter(entry => entry.isIntersecting);
-  const visible_hrefs = visible.map(entry => entry.target.href);
-  console.log(visible_hrefs);
-  //updateRelated(<Box>{visible_hrefs}</Box>);
-}
+class App extends react.Component {
 
-function App() {
-  // Hide the main section
-  const sec_main = document.querySelector('#main');
-  sec_main.style.display = "none";
-  // Hide all figures
-  sec_main.querySelectorAll('figure').forEach(elem => {
-    elem.style.display = 'none';
-  });
-  const test_box_1 = (<Box key="testbox1">Test box 1.</Box>);
-  const test_box_2 = (<Box key="testbox2">Test box 2.</Box>);
-  const related = <Related key="related"/>;
-  console.log(related);
-  //related.setState({items: [test_box_1, test_box_2]});
-  // add show related to all a items with notpaper-related class
-  const observer = new IntersectionObserver(observeRelated);
-  document.querySelectorAll('.notpaper-related').forEach(div => {
-    observer.observe(div);
-  });
-  console.log(observer); // TODO: if you don't log this it doesn't work, so presumably we need to keep the observer alive somehow
-  // Return the app layout
-  return (
-    <div className="App">
-      <div className="Header">
-        Header.
+  constructor(props) {
+    super(props);
+    // Hide the main section
+    const sec_main = document.querySelector('#main');
+    sec_main.style.display = "none";
+    // Hide all figures
+    sec_main.querySelectorAll('figure').forEach(elem => {
+      elem.style.display = 'none';
+    });
+    // create a component for the main text flow (so that we don't need to recreate it when it re-renders)
+    this.flow_column = (
+      <div id="FlowColumn" className="Column" style={{ width: "40%" }}>
+        <div dangerouslySetInnerHTML={{ __html: sec_main.innerHTML }} />
       </div>
-      <div className="MainPanel">
-        <div id="FlowColumn" className="Column" style={{width: "40%"}}>
-          <div dangerouslySetInnerHTML={{__html: sec_main.innerHTML}}/>
+    );
+    // state
+    this.state = { related: [] };
+    this.hasRelated = new Set(); // explanation in observeRelated below
+  }
+
+  // This function is called each time the IntersectionObserver realises that one of the targets it
+  // is observing has changed in terms of visibility. So, in order to get a list of what is currently
+  // visible on the screen, we keep a set this.hasRelated where we move the link source elements,
+  // and move elements in and out depending on their visibility, and then compute a second array of
+  // all the pointed to elements so we can construct a set of boxes for those.
+  observeRelated(entries, observer) {
+    // update the set of things that point to something that are currently visible
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        this.hasRelated.add(entry.target);
+      } else {
+        this.hasRelated.delete(entry.target);
+      }
+    });
+    // now create a set of things pointed to from this (to avoid duplicates)
+    // TODO: make this be in the order they appear in the document, not the order they're added to the set
+    const pointedTo = new Set([...this.hasRelated].map(target => document.querySelector(target.getAttribute('href'))));
+    // now create a box for each unique thing pointed to
+    const newboxes = [...pointedTo].map(targetItem => {
+      return (
+        <Box key={targetItem.id}>
+          <div dangerouslySetInnerHTML={{__html: targetItem.innerHTML}}/>
+        </Box>
+      );
+    });
+    const newstate = { related: newboxes };
+    this.setState(newstate);
+  }
+
+  render() {
+    // Return the app layout
+    return (
+      <div className="App">
+        <div className="Header">
+          Header.
         </div>
-        <div id="RelatedColumn" className="Column" style={{width: "60%"}}>
-          { related }
+        <div className="MainPanel">
+          {this.flow_column}
+          <div id="RelatedColumn" className="Column" style={{ width: "60%" }}>
+            <Related key="related">
+              {this.state.related}
+            </Related>
+          </div>
+        </div>
+        <div className="Footer">
+          Footer.
         </div>
       </div>
-      <div className="Footer">
-        Footer.
-      </div>
-    </div>
-  );
+    );
+  }
+
+  componentDidMount() {
+    // add show related to all a items with notpaper-related class
+    // do this after mounting because we use document.querySelectorAll and they don't exist until now
+    this.observer = new IntersectionObserver(entries => { this.observeRelated(entries, this.observer); });
+    document.querySelectorAll('.notpaper-related').forEach(div => {
+      this.observer.observe(div);
+    });
+  }
+
+  componentWillUnmount() {
+    // if we unmount, get rid of the observer
+    this.observer.disconnect();
+  }
 }
 
 export default App;
