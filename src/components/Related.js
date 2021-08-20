@@ -1,6 +1,5 @@
 import react from "react";
 
-
 class Related extends react.Component {
     render() {
         return (
