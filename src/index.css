@@ -73,3 +73,21 @@ img {
 .lorem {
   color: lightgrey;
 }
+
+.notpaperFigure {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  border: 3px solid magenta;
+}
+
+.notpaperFigureImage {
+  flex: 1 0 auto;
+  border: 3px solid green;
+}
+
+.notpaperFigureCaption {
+  flex: 1 0 auto;
+  border: 3px solid blue;
+}

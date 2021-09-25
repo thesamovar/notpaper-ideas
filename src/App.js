@@ -1,6 +1,7 @@
 import react from 'react';
 import Related from './components/Related.js';
 import Box from './components/Box.js';
+import Figure from './components/Figure.js';
 
 class App extends react.Component {
 
@@ -43,6 +44,18 @@ class App extends react.Component {
     const pointedTo = new Set([...this.hasRelated].map(target => document.querySelector(target.getAttribute('href'))));
     // now create a box for each unique thing pointed to
     const newboxes = [...pointedTo].map(targetItem => {
+      // if it matches the requirements for a Figure, we return that
+      if(targetItem.nodeName.toLowerCase()==="figure") {
+        const theimg = targetItem.querySelector('img');
+        const thecaption = targetItem.querySelector('figcaption');
+        if(theimg && thecaption) {
+          const theimgsrc=theimg.src;
+          return (
+            <Figure key={targetItem.id} imgsrc={theimgsrc} caption={thecaption.innerHTML}/>
+          )  
+        }
+      }
+      // otherwise, generic Box
       return (
         <Box key={targetItem.id}>
           <div dangerouslySetInnerHTML={{__html: targetItem.innerHTML}}/>
