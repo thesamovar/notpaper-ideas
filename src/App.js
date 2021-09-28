@@ -16,7 +16,7 @@ class App extends react.Component {
     });
     // create a component for the main text flow (so that we don't need to recreate it when it re-renders)
     this.flow_column = (
-      <div id="FlowColumn" className="Column" style={{ width: "40%" }}>
+      <div id="FlowColumn" className="Column">
         <div dangerouslySetInnerHTML={{ __html: sec_main.innerHTML }} />
       </div>
     );
@@ -73,13 +73,11 @@ class App extends react.Component {
         <div className="Header">
           Header.
         </div>
-        <div className="MainPanel">
-          {this.flow_column}
-          <div id="RelatedColumn" className="Column" style={{ width: "60%" }}>
-            <Related key="related">
-              {this.state.related}
-            </Related>
-          </div>
+        {this.flow_column}
+        <div id="RelatedColumn" className="Column">
+          <Related key="related">
+            {this.state.related}
+          </Related>
         </div>
         <div className="Footer">
           Footer.

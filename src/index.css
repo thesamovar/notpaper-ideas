@@ -13,33 +13,31 @@ code {
 }
 
 .App {
-  display: flex;
-  flex-flow: column;
+  display: grid;
+  grid-template-columns: 30% 70%;
+  grid-template-rows: max-content 1fr max-content;
+  width: 100vw;
   height: 100vh;
 }
 
 .Header {
+  grid-column: 1 / -1;
+  grid-row: 1;
   background-color: rgb(95, 118, 160);
   color: white;
   padding: 10px;
 }
 
-.MainPanel {
-  flex: 2;
-  overflow: hidden;
-}
-
 .Footer {
+  grid-column: 1 / -1;
+  grid-row: 3;
   background-color: rgb(95, 118, 160);
   color: white;
   padding: 2px;
 }
 
 .Column {
-  float: left;
-  height: 100%;
   overflow-y: auto;
-  /* border: 1px solid magenta; */
   box-sizing: border-box;
 }
 
@@ -50,44 +48,26 @@ code {
 
 #RelatedColumn {
   padding: 1em;
-  /* border: 1px solid magenta;   */
+  display: contents;
 }
 
 .related {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+	grid-template-rows: minmax(50%, 1fr) auto;
+	grid-auto-flow: column;
+	grid-auto-columns: 1fr;
+  padding: 1em;
+  column-gap: 3em;
 }
-
-.related .Box {
-  flex: auto;
-}
-
-img {
-  max-width: 100%;
-}
-
-/* .Box {
-  border: 1px solid magenta;
-} */
 
 .lorem {
   color: lightgrey;
 }
 
 .notpaperFigure {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 100%;
-  border: 3px solid magenta;
+  display: contents;
 }
 
-.notpaperFigureImage {
-  flex: 1 0 auto;
-  border: 3px solid green;
-}
-
-.notpaperFigureCaption {
-  flex: 1 0 auto;
-  border: 3px solid blue;
+.Box {
+  grid-row-end: span 2;
 }
