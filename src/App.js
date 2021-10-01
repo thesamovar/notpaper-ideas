@@ -16,20 +16,21 @@ class App extends react.Component {
       elem.style.display = 'none';
     });
     // create a component for the main text flow (so that we don't need to recreate it when it re-renders)
-    function toggleFC(e) {
-      const c = document.getElementById('FlowableColumn');
-      c.hidden = !c.hidden;
-    }
-    this.flow_column = (
-      <div id="FlowColumn" className="Column">
-        <div className="FlowableHeader">
-          <button onClick={toggleFC}>Temporary clickable thing</button>
-        </div>
-        <Flow>
-          <div dangerouslySetInnerHTML={{ __html: sec_main.innerHTML }} />
-        </Flow>
-      </div>
-      );
+    // function toggleFC(e) {
+    //   const c = document.getElementById('FlowableColumn');
+    //   c.hidden = !c.hidden;
+    // }
+    this.flow_column = <Flow main={sec_main}/>
+    // this.flow_column = (
+    //   <div id="FlowColumn" className="Column">
+    //     <div className="FlowableHeader">
+    //       <button onClick={toggleFC}>Temporary clickable thing</button>
+    //     </div>
+    //     <Flow>
+    //       <div dangerouslySetInnerHTML={{ __html: sec_main.innerHTML }} />
+    //     </Flow>
+    //   </div>
+    //   );
       // state
       this.state = { related: [] };
       this.hasRelated = new Set(); // explanation in observeRelated below
