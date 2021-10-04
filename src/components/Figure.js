@@ -1,5 +1,4 @@
 import react from "react";
-import Box from './Box.js';
 
 class Figure extends react.Component {
     render() {

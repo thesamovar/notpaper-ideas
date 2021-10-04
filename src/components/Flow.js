@@ -29,7 +29,9 @@ class Flow extends react.Component {
             visible = visible.slice(0, i+1);
             this.setState({visible_sections: visible});
         }
+        this.props.updateSections(visible);
     }
+    
     render() {
         const headers = [];
         this.state.visible_sections.forEach(sec => {
@@ -47,6 +49,20 @@ class Flow extends react.Component {
         </div>
         );
     }
+
+    componentDidUpdate() {
+        document.querySelectorAll('.notpaper-link').forEach(elem=>{
+            elem.onclick = (e) => {
+                const newsec = elem.getAttribute('href').substring(1);
+                let visible = this.state.visible_sections;
+                visible.push(newsec);
+                this.setState({visible_sections: visible});
+                this.props.updateSections(visible);
+                // TODO: this doesn't call the recreation of the observers, which should probably be moved into this class with a callback
+            };
+        });
+    }
+    
 }
 
 export default Flow;

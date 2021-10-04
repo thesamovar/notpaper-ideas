@@ -1,6 +1,5 @@
 import react from 'react';
 import Related from './components/Related.js';
-import Box from './components/Box.js';
 import Figure from './components/Figure.js';
 import Flow from './components/Flow.js';
 
@@ -15,11 +14,16 @@ class App extends react.Component {
     sec_main.querySelectorAll('figure').forEach(elem => {
       elem.style.display = 'none';
     });
-    // create a component for the main text flow (so that we don't need to recreate it when it re-renders)
-    this.flow_column = <Flow main={sec_main}/>
     // state
-    this.state = { related: [] };
+    this.state = { related: [], section_view: [] };
     this.hasRelated = new Set(); // explanation in observeRelated below
+    // create a component for the main text flow (so that we don't need to recreate it when it re-renders)
+    this.flow_column = <Flow main={sec_main} updateSections={this.updateSections.bind(this)}/>
+  }
+
+  updateSections(sections) {
+    this.hasRelated.clear();
+    this.setState({section_view: sections, related: []});
   }
   
   // This function is called each time the IntersectionObserver realises that one of the targets it
@@ -54,9 +58,7 @@ class App extends react.Component {
         }
         // otherwise, generic Box
         return (
-          <Box key={targetItem.id}>
-          <div dangerouslySetInnerHTML={{__html: targetItem.innerHTML}}/>
-          </Box>
+            <div dangerouslySetInnerHTML={{__html: targetItem.innerHTML}}/>
           );
       });
       const newstate = { related: newboxes };
@@ -67,35 +69,50 @@ class App extends react.Component {
     // Return the app layout
     return (
       <div className="App">
-      <div className="Header">
-      Header.
-      </div>
-      {this.flow_column}
-      <div id="RelatedColumn" className="Column">
-      <Related key="related">
-      {this.state.related}
-      </Related>
-      </div>
-      <div className="Footer">
-      Footer.
-      </div>
-      </div>
+        <div className="Header">
+          Header.
+        </div>
+        {this.flow_column}
+        <div id="RelatedColumn" className="Column">
+          <Related key="related">
+            {this.state.related}
+          </Related>
+        </div>
+        <div className="Footer">
+          Footer.
+        </div>
+        </div>
       );
     }
-    
+
+  // The below is an awful, awful hack because I didn't really understand React while writing it. It can
+  // be fixed when I do a rewrite.
+
   componentDidMount() {
-    // add show related to all a items with notpaper-related class
-    // do this after mounting because we use document.querySelectorAll and they don't exist until now
-    this.observer = new IntersectionObserver(entries => { this.observeRelated(entries, this.observer); });
-    document.querySelectorAll('.notpaper-related').forEach(div => {
-      this.observer.observe(div);
-    });
+    this.componentDidUpdate();
   }
-    
+
+  componentDidUpdate() {
+    if(!('_prev_section_view' in this) || this.state.section_view!==this._prev_section_view) {
+      this._prev_section_view = this.state.section_view;
+      // add show related to all a items with notpaper-related class
+      // do this after mounting because we use document.querySelectorAll and they don't exist until now
+      // if we unmount, get rid of the observer
+      if('observer' in this) {
+        this.observer.disconnect();
+      }
+      this.observer = new IntersectionObserver(entries => { this.observeRelated(entries, this.observer); });
+      document.querySelectorAll('.notpaper-related').forEach(div => {
+        this.observer.observe(div);
+      });
+    }
+  }
+      
   componentWillUnmount() {
-    // if we unmount, get rid of the observer
-    this.observer.disconnect();
+      // if we unmount, get rid of the observer
+      this.observer.disconnect();
   }
+
 }
   
 export default App;
