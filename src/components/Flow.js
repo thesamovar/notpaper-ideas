@@ -4,21 +4,9 @@ class Flow extends react.Component {
     constructor(props) {
         super(props);
         this.state = {visible_sections: ['', 'primary', 'secondary']};
-        this.sections = {'': <div dangerouslySetInnerHTML={{ __html: props.main.innerHTML }} />};
-        document.querySelectorAll('section').forEach(elem => {
-            this.buildSection(elem.id);
-        });
+        this.sections = this.props.sections;
     }
-    buildSection(sec) {
-        const sec_html = document.getElementById(sec).innerHTML;
-        let tempdiv = document.createElement('div');
-        tempdiv.innerHTML = sec_html;
-        tempdiv.querySelectorAll('.notpaper-include').forEach(elem=>{
-            const target = document.querySelector(elem.getAttribute('href'));
-            elem.outerHTML = target.innerHTML;
-        });
-        this.sections[sec] = <div dangerouslySetInnerHTML={{__html: tempdiv.innerHTML}}/>;
-    }
+    
     clickHeader(sec) {
         let visible = this.state.visible_sections;
         if(sec===visible[visible.length-1] && visible.length>1) {

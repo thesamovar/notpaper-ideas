@@ -2,23 +2,19 @@ import react from 'react';
 import Related from './components/Related.js';
 import Figure from './components/Figure.js';
 import Flow from './components/Flow.js';
+import buildAllSections from './buildsections.js';
 
 class App extends react.Component {
   
   constructor(props) {
     super(props);
-    // Hide the main section
-    const sec_main = document.querySelector('#main');
-    sec_main.style.display = "none";
-    // Hide all figures
-    sec_main.querySelectorAll('figure').forEach(elem => {
-      elem.style.display = 'none';
-    });
-    // state
+    // Build sections and hide original HTML
+    this.sections = buildAllSections();
+    // State
     this.state = { related: [], section_view: [] };
     this.hasRelated = new Set(); // explanation in observeRelated below
     // create a component for the main text flow (so that we don't need to recreate it when it re-renders)
-    this.flow_column = <Flow main={sec_main} updateSections={this.updateSections.bind(this)}/>
+    this.flow_column = <Flow sections={this.sections} updateSections={this.updateSections.bind(this)}/>
   }
 
   updateSections(sections) {
