@@ -66,7 +66,7 @@ class App extends react.Component {
     return (
       <div className="App">
         <div className="Header">
-          Header.
+          notpaper | {this.sections['_title']}
         </div>
         {this.flow_column}
         <div id="RelatedColumn" className="Column">
@@ -75,7 +75,7 @@ class App extends react.Component {
           </Related>
         </div>
         <div className="Footer">
-          Footer.
+          Footer currently left blank.
         </div>
         </div>
       );
