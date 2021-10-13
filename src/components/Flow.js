@@ -1,4 +1,6 @@
 import react from "react";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 class Flow extends react.Component {
     constructor(props) {
@@ -22,18 +24,37 @@ class Flow extends react.Component {
     
     render() {
         const headers = [];
+        const panels = [];
         this.state.visible_sections.forEach(sec => {
             const label = sec==="" ? "Main article" : "Section: "+sec;
-            headers.push(<button key={'flowbutton-'+sec} onClick={(e)=>{this.clickHeader(sec)}}>{label}</button>);
+            headers.push(
+                // <button key={'flowbutton-'+sec} onClick={(e)=>{this.clickHeader(sec)}}>{label}</button>
+                <Tab>{label}</Tab>
+                );
+            panels.push(
+                <TabPanel>
+                    {this.sections[sec]}
+                </TabPanel>
+                );
         });
         return (
         <div id="FlowColumn" className="Column">
-            <div className="FlowableHeader">
+            <div>
+                <Tabs defaultIndex={panels.length-1}>
+                    <TabList>
+                        <div className="FlowableColumn">
+                            {headers}
+                        </div>
+                    </TabList>
+                    {panels}
+                </Tabs>
+            </div>
+            {/* <div className="FlowableHeader">
                 {headers}
             </div>
             <div id="FlowableColumn">
                 {this.sections[this.state.visible_sections[this.state.visible_sections.length-1]]}
-            </div>
+            </div> */}
         </div>
         );
     }
