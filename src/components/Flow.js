@@ -29,26 +29,24 @@ class Flow extends react.Component {
             const label = sec==="" ? "Main article" : "Section: "+sec;
             headers.push(
                 // <button key={'flowbutton-'+sec} onClick={(e)=>{this.clickHeader(sec)}}>{label}</button>
-                <Tab>{label}</Tab>
+                <Tab key={"tab-"+sec}>{label}</Tab>
                 );
             panels.push(
-                <TabPanel>
+                <TabPanel key={"tabpanel-"+sec}>
                     {this.sections[sec]}
                 </TabPanel>
                 );
         });
         return (
         <div id="FlowColumn" className="Column">
-            <div>
-                <Tabs defaultIndex={panels.length-1}>
-                    <TabList>
-                        <div className="FlowableColumn">
-                            {headers}
-                        </div>
-                    </TabList>
-                    {panels}
-                </Tabs>
-            </div>
+            <Tabs defaultIndex={panels.length-1}>
+                <TabList>
+                    <div className="FlowableColumn">
+                        {headers}
+                    </div>
+                </TabList>
+                {panels}
+            </Tabs>
             {/* <div className="FlowableHeader">
                 {headers}
             </div>
